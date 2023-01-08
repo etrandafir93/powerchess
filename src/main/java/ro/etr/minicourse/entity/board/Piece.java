@@ -4,7 +4,9 @@ import static java.text.MessageFormat.format;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Objects;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import ro.etr.minicourse.entity.board.moves.Move;
@@ -23,6 +25,12 @@ public abstract class Piece {
 
     @Override
     public String toString() {
-        return format("({0} {1})", teamColor.name().toLowerCase(), getClass().getSimpleName());
+        return format("[{0} {1}]", teamColor.name().toLowerCase(), getClass().getSimpleName());
+    }
+
+    public boolean isSamePiece(Piece otherPiece) {
+        return otherPiece != null
+            && this.getClass() == otherPiece.getClass()
+            && teamColor == otherPiece.teamColor;
     }
 }

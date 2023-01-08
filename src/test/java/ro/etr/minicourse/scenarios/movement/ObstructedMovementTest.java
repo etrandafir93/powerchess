@@ -32,7 +32,7 @@ public class ObstructedMovementTest {
     @BeforeEach
     void beforeEach() {
         blockingPiece = new Rook(TeamColor.WHITE);
-        board = Board.chessBoard().withPiece(blockingPiece, square("e5"));
+        board = Board.chessBoard().putPiece(blockingPiece, square("e5"));
     }
 
     @DisplayName("obstructing the Rook")
@@ -105,17 +105,19 @@ public class ObstructedMovementTest {
     void shouldNotObstructTheKnight(
             String initialSquare, @ConvertWith(SquareArrayConverter.class) List<Square> expectedPossibleMoves) {
         Knight knight = new Knight(TeamColor.WHITE);
-        board = board.withPiece(knight, square(initialSquare));
+        Square square = square(initialSquare);
+        board = board.putPiece(knight, square);
 
-        Set<Square> possibleMoves = board.getPossibleMoves(knight);
+        Set<Square> possibleMoves = board.getPossibleMoves(knight, square);
 
         assertThat(possibleMoves).containsExactlyInAnyOrderElementsOf(expectedPossibleMoves);
     }
 
     private void runTest(String initialSquare, List<Square> expectedBlockedMoves, Piece piece) {
-        board = board.withPiece(piece, square(initialSquare));
+        Square square = square(initialSquare);
+        board = board.putPiece(piece, square);
 
-        Set<Square> possibleMoves = board.getPossibleMoves(piece);
+        Set<Square> possibleMoves = board.getPossibleMoves(piece, square);
 
         assertThat(possibleMoves)
             .doesNotContainAnyElementsOf(expectedBlockedMoves);

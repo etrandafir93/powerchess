@@ -20,4 +20,9 @@ public class BlackPawn extends Piece {
             return MoveFactory.allMoves(square, maxSquaresToMove, DOWN);
         };
     }
+
+    @Override
+    public String toString() {
+        return "[black Pawn]";
+    }
 }

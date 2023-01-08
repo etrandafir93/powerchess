@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-import ro.etr.minicourse.helper.ChessBoardAsserts;
-import ro.etr.minicourse.helper.ChessBoardAsserts.BoardTestNotation;
+import ro.etr.minicourse.helper.ChessBoardTestHelpers;
+import ro.etr.minicourse.helper.ChessBoardTestHelpers.BoardTestNotation;
 import ro.etr.minicourse.usecases.NewGameUseCase;
 
 public class NewGameUseCaseTest {
@@ -36,8 +36,7 @@ public class NewGameUseCaseTest {
                 P   P   P   P   P   P   P   P
                 R   N   B   Q   K   B   N   R
             """);
-
-        ChessBoardAsserts.assertBoardIsMatchingExpectation(theNewGame.board(), expectedBoard);
+        ChessBoardTestHelpers.assertBoardIsMatchingExpectation(theNewGame.board(), expectedBoard);
     }
 
 

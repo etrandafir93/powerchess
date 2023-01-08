@@ -2,42 +2,71 @@ package ro.etr.minicourse.entity.board;
 
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toSet;
+import static ro.etr.minicourse.entity.board.TeamColor.BLACK;
+import static ro.etr.minicourse.entity.board.TeamColor.WHITE;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import ro.etr.minicourse.entity.board.moves.Move;
 
 @ToString
 @EqualsAndHashCode
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class Board {
     private final int boardWidth;
     private final int boardHeight;
+
     @Getter
     private final Map<Square, Piece> board;
+    private final TeamColor currentPlayersTurn;
 
     public static Board chessBoard() {
-        return new Board(8, 8, new HashMap<>());
+        return new Board(8, 8, new HashMap<>(), WHITE);
     }
 
-    public Board withPiece(Piece piece, Square square) {
+    public Board putPiece(Piece piece, Square square) {
         var newBoard = new HashMap<>(board);
         newBoard.put(square, piece);
-        return new Board(boardWidth, boardHeight, newBoard);
+        return new Board(boardWidth, boardHeight, newBoard, currentPlayersTurn);
     }
 
-    public Set<Square> getPossibleMoves(Piece piece) {
-        Square square = getSquareOfThePiece(piece);
+    public Board removePiece(Piece piece, Square square) {
+        validatePieceSquare(piece, square);
+        var newBoard = new HashMap<>(board);
+        newBoard.remove(square);
+        return new Board(boardWidth, boardHeight, newBoard, currentPlayersTurn);
+    }
+
+    public void validateMove(Piece piece, Square from, Square to) {
+        validatePieceSquare(piece, from);
+        if (currentPlayersTurn != piece.getTeamColor()) {
+            var err = MessageFormat.format("{0} cannot be moved because is {1} players turn", piece, currentPlayersTurn);
+            throw new IllegalArgumentException(err);
+        }
+        if (getPossibleMoves(piece, from).stream().noneMatch(to::equals)) {
+            var err = MessageFormat.format("{0} cannot move from {1} to {2}", piece, from, to);
+            throw new IllegalArgumentException(err);
+        }
+    }
+
+    public Board movePiece(Piece piece, Square from, Square to) {
+        return removePiece(piece, from)
+            .putPiece(piece, to)
+            .changePlayersTurn();
+    }
+
+    public Set<Square> getPossibleMoves(Piece piece, Square from) {
         return piece.getMovement()
-            .getAvailableMoves(square)
+            .getAvailableMoves(from)
             .stream()
             .filter(this::isOnTheBoard)
             .filter(this::isNotObstructed)
@@ -45,20 +74,18 @@ public class Board {
             .collect(toSet());
     }
 
+    private void validatePieceSquare(Piece piece, Square square) {
+        var pieceFromBoard = board.getOrDefault(square, null);
+        if (!piece.isSamePiece(pieceFromBoard)) {
+            throw new IllegalArgumentException(piece + " is not on " + square + "; instead, on the square it was found: " + pieceFromBoard);
+        }
+    }
+
     private boolean isNotObstructed(Move move) {
         return move.path()
             .stream()
             .skip(1l)
             .noneMatch(square -> board.containsKey(square));
-    }
-
-    private Square getSquareOfThePiece(Piece piece) {
-        return board.entrySet()
-            .stream()
-            .filter(entry -> entry.getValue() == piece)
-            .map(Map.Entry::getKey)
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("The piece is not on the board!"));
     }
 
     private boolean isOnTheBoard(Move move) {
@@ -69,7 +96,8 @@ public class Board {
             && square.y() < boardHeight;
     }
 
-    public Optional<Piece> getSquare(Square square) {
-        return ofNullable(board.getOrDefault(square, null));
+    private Board changePlayersTurn() {
+        TeamColor nextPlayer = currentPlayersTurn == WHITE ? BLACK : WHITE;
+        return new Board(boardWidth, boardHeight, board, nextPlayer);
     }
 }

@@ -18,4 +18,9 @@ public class WhitePawn extends Piece {
             return MoveFactory.allMoves(square, maxSquaresToMove, MoveFactory.Directions.UP);
         };
     }
+
+    @Override
+    public String toString() {
+        return "[white Pawn]";
+    }
 }

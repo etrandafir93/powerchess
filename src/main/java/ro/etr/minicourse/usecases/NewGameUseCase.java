@@ -1,26 +1,21 @@
 package ro.etr.minicourse.usecases;
 
+import java.util.UUID;
+
 import ro.etr.minicourse.entity.board.Board;
 import ro.etr.minicourse.persistence.GameEventsGateway;
 import ro.etr.minicourse.persistence.gameevents.GameEvent;
 import ro.etr.minicourse.persistence.gameevents.NewChessGameEvent;
-import ro.etr.minicourse.usecases.presentboard.BoardMapper;
+import ro.etr.minicourse.usecases.presentboard.ChessMapper;
 import ro.etr.minicourse.usecases.presentboard.PresentableBoard;
 
 public class NewGameUseCase {
 
     public Response startNewGame(Request request) {
-        NewChessGameEvent newGame = createNewGame();
-        var events = GameEventsGateway.instance.get(newGame.getGameId());
-
-        Board board = Board.chessBoard();
-        for (GameEvent event : events) {
-            board = event.apply(board);
-        }
-
-        String gameId = newGame.getGameId().toString();
-        PresentableBoard presentableBoard = BoardMapper.map(board);
-        return new Response(gameId, presentableBoard);
+        UUID newGameId = createNewGame().getGameId();
+        var events = GameEventsGateway.instance.get(newGameId);
+        var board = GameEvent.recreateBoard(events);
+        return new Response(newGameId.toString(), ChessMapper.map(board));
     }
 
     private NewChessGameEvent createNewGame() {

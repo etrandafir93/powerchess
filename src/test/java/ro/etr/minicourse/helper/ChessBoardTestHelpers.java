@@ -20,11 +20,11 @@ import ro.etr.minicourse.entity.pieces.Knight;
 import ro.etr.minicourse.entity.pieces.Queen;
 import ro.etr.minicourse.entity.pieces.Rook;
 import ro.etr.minicourse.entity.pieces.WhitePawn;
-import ro.etr.minicourse.usecases.presentboard.BoardMapper;
+import ro.etr.minicourse.usecases.presentboard.ChessMapper;
 import ro.etr.minicourse.usecases.presentboard.PresentableBoard;
 import ro.etr.minicourse.usecases.presentboard.PresentablePiece;
 
-public class ChessBoardAsserts {
+public class ChessBoardTestHelpers {
 
     /**
      *           ---- usage example ----
@@ -52,10 +52,10 @@ public class ChessBoardAsserts {
     }
 
     public static PresentableBoard mapToPresentableBoard(BoardTestNotation testData) {
-        return BoardMapper.map(buildBoard(testData));
+        return ChessMapper.map(buildBoard(testData));
     }
 
-    private static Board buildBoard(BoardTestNotation testData) {
+    public static Board buildBoard(BoardTestNotation testData) {
         var board = Board.chessBoard();
         var rows = split(testData.data, "\n");
         for (int i = 0; i < 8; i++) {
@@ -67,7 +67,7 @@ public class ChessBoardAsserts {
                 }
                 var sr = 8 - i;
                 var sq = (char)('a' + col);
-                board = board.withPiece(createPiece(d), square(sq + "" + sr));
+                board = board.putPiece(createPiece(d), square(sq + "" + sr));
             }
         }
         return board;

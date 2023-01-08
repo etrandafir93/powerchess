@@ -4,7 +4,6 @@ import static ro.etr.minicourse.entity.board.Square.square;
 
 import java.util.UUID;
 import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
 import ro.etr.minicourse.entity.board.Board;
 import ro.etr.minicourse.entity.board.Piece;
@@ -32,20 +31,20 @@ public class NewChessGameEvent extends GameEvent {
     }
 
     private Board putPieces(Board board, TeamColor color, String row) {
-        return board.withPiece(new Rook(color), square("a" + row))
-            .withPiece(new Knight(color), square("b" + row))
-            .withPiece(new Bishop(color), square("c" + row))
-            .withPiece(new Queen(color), square("d" + row))
-            .withPiece(new King(color), square("e" + row))
-            .withPiece(new Bishop(color), square("f" + row))
-            .withPiece(new Knight(color), square("g" + row))
-            .withPiece(new Rook(color), square("h" + row));
+        return board.putPiece(new Rook(color), square("a" + row))
+            .putPiece(new Knight(color), square("b" + row))
+            .putPiece(new Bishop(color), square("c" + row))
+            .putPiece(new Queen(color), square("d" + row))
+            .putPiece(new King(color), square("e" + row))
+            .putPiece(new Bishop(color), square("f" + row))
+            .putPiece(new Knight(color), square("g" + row))
+            .putPiece(new Rook(color), square("h" + row));
     }
 
     private Board putPawns(Board board, String row, Supplier<Piece> pawn) {
         for (int i = 0; i < 8; i++) {
             String col = (char) ((int) 'a' + i) + "";
-            board = board.withPiece(pawn.get(), square(col + row));
+            board = board.putPiece(pawn.get(), square(col + row));
         }
         return board;
     }

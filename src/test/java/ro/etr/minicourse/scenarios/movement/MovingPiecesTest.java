@@ -14,7 +14,7 @@ public class MovingPiecesTest {
         Board board = Board.chessBoard();
         WhitePawn pawn = new WhitePawn();
 
-        board.withPiece(pawn, square("e4"));
+        board.putPiece(pawn, square("e4"));
 
 //        board.getPieces()
     }
