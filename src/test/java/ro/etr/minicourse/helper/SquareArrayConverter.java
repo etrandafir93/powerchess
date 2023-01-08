@@ -1,7 +1,7 @@
 package ro.etr.minicourse.helper;
 
 import static java.util.Arrays.stream;
-import static ro.etr.minicourse.Square.square;
+import static ro.etr.minicourse.entity.board.Square.square;
 
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.params.converter.ArgumentConversionException;

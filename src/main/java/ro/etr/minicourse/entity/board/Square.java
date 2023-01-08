@@ -1,4 +1,4 @@
-package ro.etr.minicourse;
+package ro.etr.minicourse.entity.board;
 
 public record Square(int x, int y) {
 
@@ -37,6 +37,20 @@ public record Square(int x, int y) {
 
     public Square right(int squaresToMoveRght) {
         return new Square(x + squaresToMoveRght, y);
+    }
+
+
+    public Square upLeft(int squaresToMoveUp) {
+        return this.up(squaresToMoveUp).left(squaresToMoveUp);
+    }
+    public Square upRight(int squaresToMoveUp) {
+        return this.up(squaresToMoveUp).right(squaresToMoveUp);
+    }
+    public Square downLeft(int squaresToMoveUp) {
+        return this.down(squaresToMoveUp).left(squaresToMoveUp);
+    }
+    public Square downRight(int squaresToMoveUp) {
+        return this.down(squaresToMoveUp).right(squaresToMoveUp);
     }
 
 }

@@ -1,7 +1,7 @@
 package ro.etr.minicourse.scenarios.movement;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static ro.etr.minicourse.Square.square;
+import static ro.etr.minicourse.entity.board.Square.square;
 
 import java.util.List;
 import java.util.Set;
@@ -12,19 +12,20 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import ro.etr.minicourse.Board;
-import ro.etr.minicourse.Square;
-import ro.etr.minicourse.TeamColor;
+import ro.etr.minicourse.entity.board.Board;
+import ro.etr.minicourse.entity.board.Piece;
+import ro.etr.minicourse.entity.board.Square;
+import ro.etr.minicourse.entity.board.TeamColor;
 import ro.etr.minicourse.helper.SquareArrayConverter;
-import ro.etr.minicourse.pieces.Bishop;
-import ro.etr.minicourse.pieces.BlackPawn;
-import ro.etr.minicourse.pieces.King;
-import ro.etr.minicourse.pieces.Knight;
-import ro.etr.minicourse.pieces.Queen;
-import ro.etr.minicourse.pieces.Rook;
-import ro.etr.minicourse.pieces.WhitePawn;
+import ro.etr.minicourse.entity.pieces.Bishop;
+import ro.etr.minicourse.entity.pieces.BlackPawn;
+import ro.etr.minicourse.entity.pieces.King;
+import ro.etr.minicourse.entity.pieces.Knight;
+import ro.etr.minicourse.entity.pieces.Queen;
+import ro.etr.minicourse.entity.pieces.Rook;
+import ro.etr.minicourse.entity.pieces.WhitePawn;
 
-public class EmptyBoardTest {
+public class SimpleMovementTest {
 
     private Board board;
 
@@ -43,12 +44,7 @@ public class EmptyBoardTest {
     }, delimiter = '|')
     void shouldKnowHowToMoveTheKnight(
             String initialSquare, @ConvertWith(SquareArrayConverter.class) List<Square> expectedPossibleMoves) {
-        Knight knight = new Knight(TeamColor.WHITE);
-        board.putPiece(square(initialSquare), knight);
-
-        Set<Square> possibleMoves = board.getPossibleMoves(knight);
-
-        assertThat(possibleMoves).containsExactlyInAnyOrderElementsOf(expectedPossibleMoves);
+        runTest(initialSquare, expectedPossibleMoves, new Knight(TeamColor.WHITE));
     }
 
     @DisplayName("move the King")
@@ -59,12 +55,7 @@ public class EmptyBoardTest {
     }, delimiter = '|')
     void shouldKnowHowToMoveTheKing(
             String initialSquare, @ConvertWith(SquareArrayConverter.class) List<Square> expectedPossibleMoves) {
-        King king = new King(TeamColor.WHITE);
-        board.putPiece(square(initialSquare), king);
-
-        Set<Square> possibleMoves = board.getPossibleMoves(king);
-
-        assertThat(possibleMoves).containsExactlyInAnyOrderElementsOf(expectedPossibleMoves);
+        runTest(initialSquare, expectedPossibleMoves, new King(TeamColor.WHITE));
     }
 
     @DisplayName("move the Rook")
@@ -75,12 +66,7 @@ public class EmptyBoardTest {
     }, delimiter = '|')
     void shouldKnowHowToMoveTheRook(
             String initialSquare, @ConvertWith(SquareArrayConverter.class) List<Square> expectedPossibleMoves) {
-        Rook rook = new Rook(TeamColor.WHITE);
-        board.putPiece(square(initialSquare), rook);
-
-        Set<Square> possibleMoves = board.getPossibleMoves(rook);
-
-        assertThat(possibleMoves).containsExactlyInAnyOrderElementsOf(expectedPossibleMoves);
+        runTest(initialSquare, expectedPossibleMoves, new Rook(TeamColor.WHITE));
     }
 
     @DisplayName("move the Bishop")
@@ -91,12 +77,7 @@ public class EmptyBoardTest {
     }, delimiter = '|')
     void shouldKnowHowToMoveTheBishop(
             String initialSquare, @ConvertWith(SquareArrayConverter.class) List<Square> expectedPossibleMoves) {
-        Bishop bishop = new Bishop(TeamColor.WHITE);
-        board.putPiece(square(initialSquare), bishop);
-
-        Set<Square> possibleMoves = board.getPossibleMoves(bishop);
-
-        assertThat(possibleMoves).containsExactlyInAnyOrderElementsOf(expectedPossibleMoves);
+        runTest(initialSquare, expectedPossibleMoves, new Bishop(TeamColor.WHITE));
     }
 
     @DisplayName("move the Queen")
@@ -106,12 +87,7 @@ public class EmptyBoardTest {
     }, delimiter = '|')
     void shouldKnowHowToMoveTheQueen(
           String initialSquare, @ConvertWith(SquareArrayConverter.class) List<Square> expectedPossibleMoves) {
-        Queen queen = new Queen(TeamColor.WHITE);
-        board.putPiece(square(initialSquare), queen);
-
-        Set<Square> possibleMoves = board.getPossibleMoves(queen);
-
-        assertThat(possibleMoves).containsExactlyInAnyOrderElementsOf(expectedPossibleMoves);
+        runTest(initialSquare, expectedPossibleMoves, new Queen(TeamColor.WHITE));
     }
 
     @DisplayName("move the White Pawn")
@@ -122,12 +98,7 @@ public class EmptyBoardTest {
     }, delimiter = '|')
     void shouldKnowHowToMoveTheWhitePawn(
             String initialSquare, @ConvertWith(SquareArrayConverter.class) List<Square> expectedPossibleMoves) {
-        WhitePawn pawn = new WhitePawn();
-        board.putPiece(square(initialSquare), pawn);
-
-        Set<Square> possibleMoves = board.getPossibleMoves(pawn);
-
-        assertThat(possibleMoves).containsExactlyInAnyOrderElementsOf(expectedPossibleMoves);
+        runTest(initialSquare, expectedPossibleMoves, new WhitePawn());
     }
 
     @DisplayName("move the Black Pawn")
@@ -138,14 +109,16 @@ public class EmptyBoardTest {
     }, delimiter = '|')
     void shouldKnowHowToMoveTheBlackPawn(
         String initialSquare, @ConvertWith(SquareArrayConverter.class) List<Square> expectedPossibleMoves) {
-        BlackPawn pawn = new BlackPawn();
-        board.putPiece(square(initialSquare), pawn);
+        runTest(initialSquare, expectedPossibleMoves, new BlackPawn());
+    }
 
-        Set<Square> possibleMoves = board.getPossibleMoves(pawn);
+    private void runTest(String initialSquare, List<Square> expectedPossibleMoves, Piece piece) {
+        board = board.withPiece(piece, square(initialSquare));
+
+        Set<Square> possibleMoves = board.getPossibleMoves(piece);
 
         assertThat(possibleMoves).containsExactlyInAnyOrderElementsOf(expectedPossibleMoves);
     }
-
 
 }
 
